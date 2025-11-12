@@ -1,0 +1,13 @@
+# Path to the dataset root directory
+path: ./anpr_dataset/YOLO_dataset
+
+# Train/val/test image directories
+train: images/train
+val: images/val
+test: images/test
+
+# Number of classes
+nc: 1
+
+# Class names
+names: ['license_plate']

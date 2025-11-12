@@ -1,0 +1,23 @@
+# Virtual Environment
+venv/
+.venv/
+
+# Datasets
+anpr_dataset/
+vehicle_dataset/
+*.zip
+
+# YOLO Training Runs (we copied the final model out)
+runs/
+
+# Base models (will be downloaded by scripts)
+yolov8n.pt
+yolo11n.pt
+
+# Python cache & temp files
+__pycache__/
+*.pyc
+*.cache
+
+# VS Code settings
+.vscode/
