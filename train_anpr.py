@@ -6,13 +6,12 @@ def main():
     model = YOLO('yolov8n.pt') 
 
     # Train the model
-    # Your RTX 4060 will be automatically detected and used (device=0)
     print("Starting ANPR model training...")
     model.train(
         data='anpr_data.yaml',
-        epochs=50,          # 50 epochs is a good start
-        imgsz=640,          # Image size
-        batch=16,           # Adjust batch size based on your 8GB VRAM
+        epochs=50,          
+        imgsz=640,          
+        batch=16,           
         name='yolov8n_anpr_custom'
     )
     print("ANPR model training complete.")
