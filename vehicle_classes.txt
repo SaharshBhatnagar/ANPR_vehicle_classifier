@@ -1,6 +1,0 @@
-aircraft
-boat
-bus
-car
-motorcycle
-truck
