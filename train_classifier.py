@@ -14,9 +14,9 @@ import timm
 import albumentations as A
 from albumentations.pytorch import ToTensorV2
 
-# ==========================================
+
 # 1. CONFIGURATION
-# ==========================================
+
 DEVICE = "cuda"
 DATA_PATH = './vehicle_dataset'
 MODEL_NAME = 'mobilenetv3_large_100'
@@ -26,10 +26,10 @@ BATCH_SIZE = 32
 LEARNING_RATE = 1e-4
 EPOCHS = 25
 
-# ==========================================
+
 # 2. DATA TRANSFORMS
-# ==========================================
-# Rules to prepare images for the AI
+
+#  prepare images
 train_transforms = A.Compose([
     A.Resize(IMG_SIZE, IMG_SIZE),
     A.HorizontalFlip(),     # Randomly flip (Data Augmentation)
@@ -44,9 +44,9 @@ val_transforms = A.Compose([
     ToTensorV2()
 ])
 
-# ==========================================
+
 # 3. CUSTOM DATASET CLASS
-# ==========================================
+
 class VehicleDataset(Dataset):
     def __init__(self, root_dir, transform=None):
         self.transform = transform
@@ -75,13 +75,13 @@ class VehicleDataset(Dataset):
             
         return image, label
 
-# ==========================================
+
 # 4. TRAINING ENGINE
-# ==========================================
+
 def train_model():
     print(f"\n Starting training on: {DEVICE.upper()}")
     
-    # --- A. Setup Data ---
+    # ---  Setup Data ---
     full_data = VehicleDataset(root_dir=DATA_PATH)
     
     # Save class names for the App
@@ -105,7 +105,7 @@ def train_model():
     val_loader = DataLoader(torch.utils.data.Subset(val_ds, val_idx), 
                             batch_size=BATCH_SIZE, num_workers=4, pin_memory=True)
 
-    # --- B. Setup Model ---
+    # ---  Setup Model ---
     print(f" Loading Model: {MODEL_NAME}...")
     model = timm.create_model(MODEL_NAME, pretrained=True, num_classes=NUM_CLASSES)
     model = model.to(DEVICE)
@@ -114,11 +114,11 @@ def train_model():
     criterion = nn.CrossEntropyLoss()
     best_accuracy = 0.0
 
-    # --- C. Training Loop ---
+    # ---  Training Loop ---
     for epoch in range(EPOCHS):
         print(f"\n--- Epoch {epoch+1}/{EPOCHS} ---")
         
-        # 1. Train
+        #  Train
         model.train()
         train_loss = 0.0
         
@@ -136,7 +136,7 @@ def train_model():
             if (i+1) % 10 == 0: 
                 print(f"  Batch {i+1}/{len(train_loader)} | Loss: {loss.item():.4f}")
 
-        # 2. Validate
+        #  Validate
         model.eval()
         val_loss = 0.0
         correct = 0
@@ -152,14 +152,14 @@ def train_model():
                 total += labels.size(0)
                 correct += (predicted == labels).sum().item()
 
-        # 3. Statistics
+        #  Statistics
         avg_train_loss = train_loss / len(train_loader)
         avg_val_loss = val_loss / len(val_loader)
         accuracy = 100 * correct / total
         
         print(f" Summary: Train Loss: {avg_train_loss:.4f} | Val Loss: {avg_val_loss:.4f} | Acc: {accuracy:.2f}%")
 
-        # 4. Save Best Model
+        #  Save Best Model
         if accuracy > best_accuracy:
             best_accuracy = accuracy
             torch.save(model.state_dict(), 'vehicle_classifier.pth')
