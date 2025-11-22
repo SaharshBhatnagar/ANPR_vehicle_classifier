@@ -15,7 +15,7 @@ import albumentations as A
 from albumentations.pytorch import ToTensorV2
 
 
-# 1. CONFIGURATION
+# CONFIGURATION
 
 DEVICE = "cuda"
 DATA_PATH = './vehicle_dataset'
@@ -27,7 +27,7 @@ LEARNING_RATE = 1e-4
 EPOCHS = 25
 
 
-# 2. DATA TRANSFORMS
+# DATA TRANSFORMS
 
 #  prepare images
 train_transforms = A.Compose([
@@ -45,13 +45,13 @@ val_transforms = A.Compose([
 ])
 
 
-# 3. CUSTOM DATASET CLASS
+# CUSTOM DATASET CLASS
 
 class VehicleDataset(Dataset):
     def __init__(self, root_dir, transform=None):
         self.transform = transform
         
-        # Fix for nested folder structures (e.g., vehicle_dataset/data/...)
+       
         data_root = os.path.join(root_dir, 'data')
         if not os.path.exists(data_root):
              data_root = root_dir 
@@ -76,12 +76,12 @@ class VehicleDataset(Dataset):
         return image, label
 
 
-# 4. TRAINING ENGINE
+# TRAINING ENGINE
 
 def train_model():
     print(f"\n Starting training on: {DEVICE.upper()}")
     
-    # ---  Setup Data ---
+    # Setup Data 
     full_data = VehicleDataset(root_dir=DATA_PATH)
     
     # Save class names for the App
@@ -105,7 +105,7 @@ def train_model():
     val_loader = DataLoader(torch.utils.data.Subset(val_ds, val_idx), 
                             batch_size=BATCH_SIZE, num_workers=4, pin_memory=True)
 
-    # ---  Setup Model ---
+    # Setup Model 
     print(f" Loading Model: {MODEL_NAME}...")
     model = timm.create_model(MODEL_NAME, pretrained=True, num_classes=NUM_CLASSES)
     model = model.to(DEVICE)
@@ -114,7 +114,7 @@ def train_model():
     criterion = nn.CrossEntropyLoss()
     best_accuracy = 0.0
 
-    # ---  Training Loop ---
+    #  Training Loop 
     for epoch in range(EPOCHS):
         print(f"\n--- Epoch {epoch+1}/{EPOCHS} ---")
         

@@ -9,7 +9,7 @@ import albumentations as A
 from albumentations.pytorch import ToTensorV2
 import tempfile
 
-# 1. CONFIGURATION
+# CONFIGURATION
 DEVICE = "cuda"
 ANPR_PATH = 'anpr_best.pt'
 CLS_PATH = 'vehicle_classifier.pth'
@@ -18,30 +18,29 @@ IMG_SIZE = 224
 NUM_CLASSES = 6 
 MODEL_NAME = 'mobilenetv3_large_100'
 
-# 2. LOAD AI MODELS
+# LOAD MODELS
 @st.cache_resource
 def load_models():
-    # A. Load Class Names
+    #  Load Class Names
     with open(CLASS_FILE, 'r') as f:
         class_names = [line.strip() for line in f.readlines()]
     
-    # B. Load Vehicle Classifier (MobileNet - Checks "Type")
+    # Load Vehicle Classifier (MobileNet - Checks "Type")
     classifier = timm.create_model(MODEL_NAME, num_classes=NUM_CLASSES)
     classifier.load_state_dict(torch.load(CLS_PATH, map_location='cpu'))
     classifier.to(DEVICE).eval()
     
-    # C. Load License Plate Detector (Custom YOLO - Finds "Plate")
+    # Load License Plate Detector (Custom YOLO - Finds "Plate")
     anpr = YOLO(ANPR_PATH)
     anpr.to(DEVICE)
 
-    # D. Load Vehicle Detector (Standard YOLO - Finds "Vehicle")
-    # 'n' version is small and fast. It knows 'car', 'bus', 'truck' by default.
+    # Load Vehicle Detector (Standard YOLO - Finds "Vehicle")
     vehicle_detector = YOLO('yolov8n.pt')
     vehicle_detector.to(DEVICE)
     
     return classifier, anpr, vehicle_detector, class_names
 
-# 3. PREPROCESSING
+# PREPROCESSING
 transform = A.Compose([
     A.Resize(IMG_SIZE, IMG_SIZE),
     A.Normalize(), 
@@ -50,17 +49,17 @@ transform = A.Compose([
 
 # Helper function to process a single frame
 def process_frame(frame_bgr, classifier, anpr, vehicle_detector, class_names):
-    # --- TASK 1: Find and Draw Vehicle (Blue Box) ---
-    # We tell YOLO to only look for: 2=Car, 3=Motorcycle, 5=Bus, 7=Truck
+
+    # Find and Draw Vehicle (Blue Box)
     vehicle_results = vehicle_detector(frame_bgr, classes=[2, 3, 5, 7], verbose=False)
     
     for box in vehicle_results[0].boxes:
         x1, y1, x2, y2 = map(int, box.xyxy[0])
         
-        # 1. Draw Blue Box for Vehicle
+        # Draw Blue Box for Vehicle
         cv2.rectangle(frame_bgr, (x1, y1), (x2, y2), (255, 0, 0), 3) # Blue Color
         
-        # 2. Double Check Type with MobileNet
+
         # We crop the vehicle area and ask MobileNet exactly what it is
         vehicle_crop = frame_bgr[y1:y2, x1:x2]
         if vehicle_crop.size > 0:
@@ -81,7 +80,7 @@ def process_frame(frame_bgr, classifier, anpr, vehicle_detector, class_names):
             cv2.putText(frame_bgr, label, (x1, y1 - 10), cv2.FONT_HERSHEY_SIMPLEX, 
                         0.9, (255, 0, 0), 2)
 
-    # --- Find and Draw Plate (Green Box) ---
+    # Find and Draw Plate (Green Box)
     plate_results = anpr(frame_bgr, verbose=False)
     for box in plate_results[0].boxes:
         px1, py1, px2, py2 = map(int, box.xyxy[0])
@@ -93,13 +92,13 @@ def process_frame(frame_bgr, classifier, anpr, vehicle_detector, class_names):
 
     return frame_bgr
 
-# 4. MAIN APP UI
+# MAIN APP UI
 st.title("Vehicle & Plate Detection System", anchor=False)
 classifier, anpr, vehicle_detector, class_names = load_models()
 
 tab1, tab2 = st.tabs(["📷 Image Mode", "🎥 Video Mode"])
 
-# --- TAB 1: IMAGE MODE ---
+# IMAGE MODE 
 with tab1:
     uploaded_file = st.file_uploader("Upload Image", type=["jpg", "png", "jpeg"])
     if uploaded_file:
@@ -110,7 +109,7 @@ with tab1:
         processed_frame = process_frame(image_bgr.copy(), classifier, anpr, vehicle_detector, class_names)
         st.image(cv2.cvtColor(processed_frame, cv2.COLOR_BGR2RGB), caption="Analyzed Image", use_container_width=True)
 
-# --- TAB 2: VIDEO MODE ---
+# VIDEO MODE 
 with tab2:
     uploaded_video = st.file_uploader("Upload Video", type=['mp4', 'avi', 'mov'])
     

@@ -2,7 +2,6 @@ from ultralytics import YOLO
 
 def main():
     # Load a pre-trained YOLOv8n (nano) model
-    # 'n' is the smallest and fastest. 's' or 'm' might be more accurate.
     model = YOLO('yolov8n.pt') 
 
     # Train the model
