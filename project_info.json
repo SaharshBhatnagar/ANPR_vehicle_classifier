@@ -1,0 +1,82 @@
+{
+  "project_info": {
+    "name": "Vehicle Identifier & ANPR System",
+    "description": "A multi-stage computer vision system that detects license plates and classifies vehicle types using Deep Learning.",
+    "interface": "Streamlit Web UI"
+  },
+  "datasets": [
+    {
+      "task": "License Plate Detection (ANPR)",
+      "dataset_name": "License Plate Detection Dataset (ANPR) YOLO Format",
+      "uploader": "Harshit Singh",
+      "source": "Kaggle",
+      "kaggle_slug": "harshitsingh09/license-plate-detection-dataset-anpr-yolo-format",
+      "download_command": "kaggle datasets download -d harshitsingh09/license-plate-detection-dataset-anpr-yolo-format",
+      "format": "YOLO (txt labels)"
+    },
+    {
+      "task": "Vehicle Type Classification",
+      "dataset_name": "Vehicle Multi Classification",
+      "uploader": "Kunal Madan",
+      "source": "Kaggle",
+      "kaggle_slug": "kunalmadan/vehicle-multi-classification",
+      "download_command": "kaggle datasets download -d kunalmadan/vehicle-multi-classification",
+      "classes": [
+        "Aircraft",
+        "Boat",
+        "Bus",
+        "Car",
+        "Motorcycle",
+        "Truck"
+      ]
+    }
+  ],
+  "technology_stack": {
+    "language": "Python 3.9+",
+    "core_framework": "PyTorch (CUDA Version)",
+    "detection_library": "Ultralytics YOLOv8",
+    "classification_library": "Timm (PyTorch Image Models)",
+    "image_processing": [
+      "OpenCV (cv2)",
+      "Pillow (PIL)",
+      "Albumentations (Augmentation)"
+    ],
+    "web_framework": "Streamlit"
+  },
+  "model_configurations": {
+    "anpr_model": {
+      "architecture": "YOLOv8n (Nano)",
+      "weights_file": "anpr_best.pt",
+      "training_epochs": 50,
+      "img_size": 640
+    },
+    "classifier_model": {
+      "architecture": "MobileNetV3 Large 100",
+      "library_name": "mobilenetv3_large_100",
+      "weights_file": "vehicle_classifier.pth",
+      "training_epochs": 25,
+      "img_size": 224,
+      "num_classes": 6
+    }
+  },
+  
+  "project_structure": {
+    "root_files": [
+      "app.py",
+      "train_anpr.py",
+      "train_classifier.py",
+      "anpr_data.yaml",
+      "requirements.txt",
+      ".gitignore",
+      "anpr_best.pt",
+      "vehicle_classifier.pth",
+      "vehicle_classes.txt"
+    ],
+    "directories": [
+      "anpr_dataset/",
+      "vehicle_dataset/",
+      "runs/",
+      "venv/"
+    ]
+  }
+}
