@@ -22,12 +22,6 @@ __pycache__/
 # VS Code settings
 .vscode/
 
-# model best run save
-anpr_best.pt
-
-# model best run file 
-anpr_data.yaml
-
-# vehicle classes
-vehicle_classes.txt
-vehicle_classifier.pth
+# extras
+*.pdf
+*.pptx
