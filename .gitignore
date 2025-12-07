@@ -7,6 +7,9 @@ anpr_dataset/
 vehicle_dataset/
 *.zip
 
+# about project
+.json
+
 # YOLO Training Runs (we copied the final model out)
 runs/
 
